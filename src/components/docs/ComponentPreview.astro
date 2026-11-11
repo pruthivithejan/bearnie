@@ -329,32 +329,11 @@ const normalizedCode = displayCode
           const checkIcon = copyButton.querySelector("[data-check-icon]");
 
           copyButton.addEventListener("click", async () => {
-            // Find the visible code content relative to this button
-            const panel = copyButton.closest("[data-preview-panel]");
-            let codeContent: Element | null = null;
-
-            if (panel) {
-              // Check for visible PM panel first
-              const visiblePmPanel = panel.querySelector(
-                "[data-pm-panel]:not(.hidden)",
-              );
-              if (visiblePmPanel) {
-                codeContent = visiblePmPanel.querySelector(
-                  "[data-code-content]",
-                );
-              } else {
-                codeContent = panel.querySelector("[data-code-content]");
-              }
-            } else {
-              // Fallback for code panel in preview mode
-              const activePanel = container.querySelector(
-                "[data-preview-panel]:not(.hidden)",
-              );
-              codeContent =
-                activePanel?.querySelector("[data-code-content]") || null;
-            }
-
-            const code = codeContent?.textContent || "";
+            const panel = container.getAttribute("data-mode") === "install"
+              ? container.querySelector("[data-pm-panel]:not(.hidden)")
+              : container.querySelector('[data-preview-panel="code"]');
+            const code = panel?.querySelector("[data-code-content]")?.textContent;
+            if (!code) return;
 
             try {
               await navigator.clipboard.writeText(code);
